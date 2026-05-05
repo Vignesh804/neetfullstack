@@ -15,7 +15,7 @@ type AuthContextValue = {
   user: AuthUser | null;
   pendingOtpTarget?: string;
   signIn: (args: { email: string; password: string }) => Promise<void>;
-  signInTeacher: (args: { email: string; password: string }) => Promise<void>;
+  signInTeacher: (args: { email: string; password: string; teacherCode: string }) => Promise<void>;
   signInAdmin: (args: { email: string; password: string }) => Promise<void>;
   signUp: (args: {
     name: string;
@@ -118,8 +118,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           user,
         }));
       },
-      async signInTeacher({ email, password }) {
-        const resp = await api.auth.login({ email, password, role: "teacher", device_id: getDeviceId() });
+      async signInTeacher({ email, password, teacherCode }: { email: string; password: string; teacherCode: string }) {
+        const resp = await api.auth.login({ email, password, role: "teacher", device_id: getDeviceId(), teacher_code: teacherCode });
         const user = toAuthUser(resp.user);
         update((prev) => ({
           ...prev,
@@ -158,6 +158,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           refreshToken: null,
           user: null,
         });
+        // Clear any cached data and redirect to teacher login
+        try {
+          globalThis.dispatchEvent(new Event("neet_auth_snapshot"));
+        } catch { /* ignore */ }
       },
       async updateProfile({ name }) {
         const nextName = name.trim();

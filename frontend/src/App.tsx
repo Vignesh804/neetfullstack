@@ -1,6 +1,6 @@
 import { Suspense, lazy, memo } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { Route, Routes } from "react-router-dom";
+import { motion } from "framer-motion";
 import { AuthProvider } from "@/auth/AuthContext";
 import { ProtectedLayout } from "@/auth/ProtectedLayout";
 import { AdminLayout } from "@/auth/AdminLayout";
@@ -173,13 +173,10 @@ const FullPageLoader = memo(function FullPageLoader() {
 
 // ── Main App ──────────────────────────────────────────────────────────────────
 export default function App() {
-  const location = useLocation();
-
   return (
     <AuthProvider>
       <Suspense fallback={<FullPageLoader />}>
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
+        <Routes>
 
             {/* ── Public ── */}
             <Route path="/"                  element={<SplashScreen />} />
@@ -249,7 +246,6 @@ export default function App() {
 
             <Route path="*" element={<NotFoundScreen />} />
           </Routes>
-        </AnimatePresence>
       </Suspense>
     </AuthProvider>
   );

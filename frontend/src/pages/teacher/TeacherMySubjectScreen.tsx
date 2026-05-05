@@ -210,6 +210,8 @@ export function TeacherMySubjectScreen() {
     try {
       const result = await api.teacher.selfAssignSubject({ subject: selectedSubject });
       setSubjectInfo(result);
+      // Redirect to dashboard after subject assignment
+      window.location.href = "/teacher";
     } catch (err: any) {
       setAssignError(err?.message ?? "Failed to assign subject.");
     } finally {

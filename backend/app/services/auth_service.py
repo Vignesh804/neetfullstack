@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.errors import AppError
 from app.core.security import get_password_hash, verify_password
 from app.models.enums import UserRole
+from app.models.teacher_code import TeacherAccessCode
 from app.models.user import User
 from app.schemas.user import UserCreate
 
@@ -14,6 +15,17 @@ from app.schemas.user import UserCreate
 async def get_user_by_email(session: AsyncSession, email: str) -> User | None:
   res = await session.execute(select(User).where(User.email == email))
   return res.scalar_one_or_none()
+
+
+async def validate_teacher_code(session: AsyncSession, code: str) -> bool:
+  """Return True if the code exists and is active."""
+  res = await session.execute(
+    select(TeacherAccessCode).where(
+      TeacherAccessCode.code == code.strip(),
+      TeacherAccessCode.is_active.is_(True),
+    )
+  )
+  return res.scalar_one_or_none() is not None
 
 
 async def create_user(
@@ -56,14 +68,34 @@ async def authenticate(
   email: str,
   password: str,
   role: UserRole | None = None,
+  teacher_code: str | None = None,
 ) -> User:
   user = await get_user_by_email(session, str(email).lower())
   if not user:
     raise AppError("Invalid credentials", status_code=status.HTTP_401_UNAUTHORIZED, code="invalid_credentials")
+
   # Allow admin to log in regardless of requested role; otherwise enforce role match.
   if role and user.role != UserRole.admin and user.role != role:
     raise AppError("Invalid role for account", status_code=status.HTTP_403_FORBIDDEN, code="role_mismatch")
+
   if not verify_password(password, user.hashed_password):
     raise AppError("Invalid credentials", status_code=status.HTTP_401_UNAUTHORIZED, code="invalid_credentials")
+
+  # Teacher login requires a valid access code
+  if user.role == UserRole.teacher:
+    if not teacher_code:
+      raise AppError(
+        "Teacher access code is required",
+        status_code=status.HTTP_403_FORBIDDEN,
+        code="teacher_code_required",
+      )
+    code_valid = await validate_teacher_code(session, teacher_code)
+    if not code_valid:
+      raise AppError(
+        "Invalid teacher access code",
+        status_code=status.HTTP_403_FORBIDDEN,
+        code="invalid_teacher_code",
+      )
+
   return user
 

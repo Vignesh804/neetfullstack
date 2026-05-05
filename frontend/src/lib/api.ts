@@ -412,7 +412,7 @@ export const api = {
   auth: {
     register: (args: { name: string; email: string; password: string; device_id?: string; role?: UserRole }) =>
       requestJson<ApiTokenResponse>("/auth/register", { method: "POST", body: args, auth: false }),
-    login: (args: { email: string; password: string; role?: UserRole; device_id?: string }) =>
+    login: (args: { email: string; password: string; role?: UserRole; device_id?: string; teacher_code?: string }) =>
       requestJson<ApiTokenResponse>("/auth/login", { method: "POST", body: args, auth: false }),
     // retry:false → don't auto-clear auth on 401; AuthContext handles session expiry itself
     me: () => requestJson<ApiUserPublic>("/auth/me", { retry: false }),

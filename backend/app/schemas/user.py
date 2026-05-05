@@ -25,6 +25,7 @@ class UserLogin(BaseModel):
   password: str
   role: UserRole | None = None
   device_id: str | None = Field(default=None, max_length=80)
+  teacher_code: str | None = Field(default=None, max_length=20)
 
 
 class UserPublic(BaseModel):

@@ -89,6 +89,11 @@ export function TeacherShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false);
   const prevPath = useRef(location.pathname);
 
+  function handleSignOut() {
+    signOut();
+    window.location.replace("/");
+  }
+
   const theme = useAppStore((s) => s.theme);
   const toggleTheme = useAppStore((s) => s.toggleTheme);
 
@@ -120,13 +125,12 @@ export function TeacherShell({ children }: { children: React.ReactNode }) {
   return (
     <div
       style={{
-        background: isDark ? "transparent" : "#FBF8F3",
+        background: isDark ? "transparent" : "rgba(251,248,243,0.85)",
         minHeight: "100vh",
         transition: "background 0.35s ease",
       }}
     >
-      {/* Animated background always visible in dark mode */}
-      <AnimatedBackground theme="default" />
+      {/* Cursor glow */}
       <CursorGlow />
       {/* Mobile overlay */}
       <AnimatePresence>
@@ -245,7 +249,7 @@ export function TeacherShell({ children }: { children: React.ReactNode }) {
                 <div className="grid h-8 w-8 place-items-center rounded-xl text-sm font-bold text-white" style={{ background: avatarBg }}>
                   {(user?.name ?? "T").charAt(0).toUpperCase()}
                 </div>
-                <motion.button type="button" onClick={signOut} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                <motion.button type="button" onClick={handleSignOut} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                   className="grid h-7 w-7 place-items-center rounded-lg transition focus-ring" style={{ color: iconColor }}>
                   <LogOut className="h-3.5 w-3.5" />
                 </motion.button>
@@ -259,7 +263,7 @@ export function TeacherShell({ children }: { children: React.ReactNode }) {
                   <div className="truncate text-xs font-semibold" style={{ color: userNameColor }}>{user?.name ?? "Teacher"}</div>
                   <div className="truncate text-[10px]" style={{ color: userEmailColor }}>{user?.email ?? ""}</div>
                 </div>
-                <motion.button type="button" onClick={signOut} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+                <motion.button type="button" onClick={handleSignOut} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                   className="grid h-7 w-7 shrink-0 place-items-center rounded-lg transition focus-ring" style={{ color: iconColor }}>
                   <LogOut className="h-3.5 w-3.5" />
                 </motion.button>

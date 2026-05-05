@@ -36,6 +36,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const title = usePageTitle(location.pathname);
 
+  function handleSignOut() {
+    signOut();
+    window.location.replace("/");
+  }
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(true); // default open so items are always accessible
   const [searchOpen, setSearchOpen] = useState(false);
@@ -46,7 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const toggleSidebarCollapsed = useAppStore((s) => s.toggleSidebarCollapsed);
 
   const isDark = theme === "dark";
-  const sidebarWidth = sidebarCollapsed ? 96 : 300;
+  const sidebarWidth = sidebarCollapsed ? 72 : 260;
 
   // ── Detect page theme for background ──────────────────────────────────────
   const bgTheme = useMemo((): BgTheme => {
@@ -59,10 +64,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const mainNav = useMemo<SideItem[]>(() => {
     const base: SideItem[] = [
-      { label: "Dashboard",   to: "/app",             icon: Home,      end: true },
-      { label: "My Courses",  to: "/app/subjects",    icon: BookOpen },
-      { label: "Performance", to: "/app/performance", icon: BarChart3 },
-      { label: "Study Room",  to: "/app/notes",       icon: Sparkles },
+      { label: "Dashboard",      to: "/app",             icon: Home,         end: true },
+      { label: "Learning Hub",   to: "/app/subjects",    icon: BookOpen },
+      { label: "Analytics",      to: "/app/performance", icon: BarChart3 },
+      { label: "Study Room",     to: "/app/notes",       icon: Sparkles },
     ];
     if (user?.role === "admin") base.push({ label: "Upload (Admin)", to: "/admin", icon: UploadCloud });
     return base;
@@ -76,8 +81,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     { label: "Adaptive Practice", to: "/app/adaptive-practice", icon: Sparkles },
     { label: "Revision Vault",    to: "/app/revision-vault",    icon: BookOpen },
     { label: "AI Assistant",      to: "/app/ai-assistant",      icon: Sparkles },
+    { label: "Elite League",      to: "/app/leaderboard",       icon: BarChart3 },
     { label: "Rank Predictor",    to: "/app/rank-predictor",    icon: BarChart3 },
-    { label: "Leaderboard",       to: "/app/leaderboard",       icon: BarChart3 },
     { label: "Ask a Doubt",       to: "/app/ask-doubt",         icon: HelpCircle },
     { label: "Bookmarks",         to: "/app/bookmarks",         icon: Bookmark },
     { label: "Notifications",     to: "/app/notifications",     icon: Bell },
@@ -107,43 +112,41 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   useEffect(() => { setSidebarOpen(false); }, [location.pathname]);
 
   // ── Derived theme values ────────────────────────────────────────────────────
-  const pageBg        = isDark ? "transparent"                : "#FBF8F3";
-  const sidebarBg     = isDark ? "rgba(11,15,26,0.85)"        : "#FFFFFF";
-  const sidebarBorder = isDark ? "rgba(255,255,255,0.08)"     : "#E8E5E0";
-  const sidebarShadow = isDark
-    ? "0 4px 24px rgba(0,0,0,0.6), 0 0 40px rgba(139,92,246,0.08)"
+  const pageBg          = isDark ? "transparent"                : "rgba(251,248,243,0.85)";
+  const sidebarBg       = isDark ? "rgba(8,12,22,0.92)"         : "#FFFFFF";
+  const sidebarBorder   = isDark ? "rgba(255,255,255,0.07)"     : "#E8E5E0";
+  const sidebarShadow   = isDark
+    ? "4px 0 32px rgba(0,0,0,0.7), 0 0 60px rgba(139,92,246,0.08)"
     : "0 4px 20px rgba(0,0,0,0.08)";
-  const headerBg      = isDark ? "rgba(11,15,26,0.80)"        : "rgba(255,255,255,0.95)";
-  const headerBorder  = isDark ? "rgba(255,255,255,0.08)"     : "#E8E5E0";
-  const headerShadow  = isDark
-    ? "0 4px 24px rgba(0,0,0,0.4), 0 0 40px rgba(139,92,246,0.06)"
+  const headerBg        = isDark ? "rgba(8,12,22,0.88)"         : "rgba(255,255,255,0.95)";
+  const headerBorder    = isDark ? "rgba(255,255,255,0.07)"     : "#E8E5E0";
+  const headerShadow    = isDark
+    ? "0 4px 24px rgba(0,0,0,0.5), 0 0 40px rgba(139,92,246,0.05)"
     : "0 2px 12px rgba(0,0,0,0.06)";
-  const btnBg         = isDark ? "rgba(255,255,255,0.06)"     : "#F5F2ED";
-  const btnBorder     = isDark ? "rgba(255,255,255,0.1)"      : "#E8E5E0";
-  const btnColor      = isDark ? "#9CA3AF"                    : "#6B7280";
-  const userCardBg    = isDark ? "rgba(255,255,255,0.04)"     : "#F5F2ED";
-  const userCardBorder= isDark ? "rgba(255,255,255,0.08)"     : "#E8E5E0";
-  const textPrimary   = isDark ? "#FFFFFF"                    : "#1A1D2E";
-  const textSecondary = isDark ? "#9CA3AF"                    : "#6B7280";
-  const mobileBg      = isDark ? "#0A0F1C"                    : "#FFFFFF";
-  const mobileNavBg   = isDark ? "#0A0F1C"                    : "#FFFFFF";
-  const mobileNavBorder = isDark ? "rgba(255,255,255,0.08)"   : "#E8E5E0";
+  const btnBg           = isDark ? "rgba(255,255,255,0.06)"     : "#F5F2ED";
+  const btnBorder       = isDark ? "rgba(255,255,255,0.1)"      : "#E8E5E0";
+  const btnColor        = isDark ? "#94A3B8"                    : "#6B7280";
+  const userCardBg      = isDark ? "rgba(255,255,255,0.04)"     : "#F5F2ED";
+  const userCardBorder  = isDark ? "rgba(255,255,255,0.08)"     : "#E8E5E0";
+  const textPrimary     = isDark ? "#F1F5F9"                    : "#1A1D2E";
+  const textSecondary   = isDark ? "#94A3B8"                    : "#6B7280";
+  const mobileBg        = isDark ? "rgba(8,12,22,0.95)"         : "#FFFFFF";
+  const mobileNavBg     = isDark ? "rgba(8,12,22,0.95)"         : "#FFFFFF";
+  const mobileNavBorder = isDark ? "rgba(255,255,255,0.08)"     : "#E8E5E0";
 
-  // Light mode: dark readable text; Dark mode: bright white text
   const navActive   = isDark
-    ? "bg-[rgba(139,92,246,0.25)] text-white shadow-[0_0_20px_rgba(139,92,246,0.2)] font-bold"
+    ? "bg-[rgba(139,92,246,0.22)] text-white font-bold shadow-[0_0_20px_rgba(139,92,246,0.2)]"
     : "bg-gradient-to-r from-[#EDE9FE] to-[#DDD6FE] text-[#5B21B6] font-bold";
   const navInactive = isDark
-    ? "text-[#9CA3AF] hover:bg-[rgba(139,92,246,0.15)] hover:text-white"
+    ? "text-[#64748B] hover:bg-[rgba(139,92,246,0.12)] hover:text-[#CBD5E1]"
     : "text-[#374151] hover:bg-[#F3F0FF] hover:text-[#5B21B6]";
 
-  const linkBase = "group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-semibold transition-all duration-200";
+  const linkBase = "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200";
 
   return (
     <div style={{ minHeight: "100vh", background: pageBg, transition: "background 0.35s ease" }}>
 
-      {/* ── Animated background always visible ── */}
-      <AnimatedBackground theme={bgTheme} />
+      {/* ── Cursor glow (dark mode) ── */}
       {isDark && <CursorGlow />}
 
       {/* Mobile overlay */}
@@ -349,7 +352,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   onClick={() => { setSidebarOpen(false); setSearchOpen(true); }}>
                   <Search className="h-4 w-4" /> Search
                 </Button>
-                <Button variant="danger" className="h-11 rounded-2xl" onClick={signOut}>
+                <Button variant="danger" className="h-11 rounded-2xl" onClick={handleSignOut}>
                   <LogOut className="h-4 w-4" /> Sign out
                 </Button>
               </div>
@@ -429,7 +432,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   </Link>
 
                   {/* Sign out */}
-                  <button type="button" onClick={signOut}
+                  <button type="button" onClick={handleSignOut}
                     className="hidden md:grid h-10 w-10 place-items-center rounded-2xl border transition focus-ring"
                     style={{ background: btnBg, borderColor: btnBorder, color: btnColor }}>
                     <LogOut className="h-5 w-5" />

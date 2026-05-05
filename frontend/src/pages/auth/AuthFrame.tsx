@@ -100,14 +100,6 @@ export function AuthFrame({
           <div className="mt-6">{children}</div>
         </motion.div>
 
-        <motion.div
-          className="mt-4 text-center text-xs font-semibold text-white/20"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
-          NEET Learning • React + Tailwind + Framer Motion
-        </motion.div>
       </div>
     </motion.div>
   );

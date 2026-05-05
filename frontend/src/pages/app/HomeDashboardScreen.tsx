@@ -2,19 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Flame, GraduationCap, Loader2, PlayCircle, Sparkles, Wand2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ThumbImage } from "@/components/ui/ThumbImage";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
+import { Badge } from "@/components/ui/Badge";
 import { subjects, type Video as UiVideo } from "@/data/mockData";
 import { useAppStore } from "@/state/useAppStore";
 import { useHydrated } from "@/state/useHydrated";
 import { getYouTubeThumbnail } from "@/lib/video";
 import { api, apiSubjectToKey, type ApiCoursePublic, type ApiDashboardSummary, type ApiLessonPublic } from "@/lib/api";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { staggerContainer, staggerItem, staggerItemScale } from "@/lib/motion";
+import { staggerContainer, staggerItem } from "@/lib/motion";
 
 function pctFor(videoId: string, durationMin: number, progress: Record<string, any>) {
   const p = progress[videoId];
@@ -195,344 +193,480 @@ export function HomeDashboardScreen() {
   };
 
   return (
-    <div className="space-y-4">
-      {/* Hero banner — from uploaded: title x:-50 → 0 */}
+    <div className="space-y-5">
+
+      {/* ── HERO BANNER ── */}
       <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
-      <Card className="overflow-hidden">
-        <div className="relative p-6 md:p-8">
-          <div className="absolute inset-0 byjus-gradient opacity-90" />
-          <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
-          <div className="absolute -left-24 -bottom-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
-          <div className="relative">
-            <Badge className="border-white/30 bg-white/15 text-white">
-              <Sparkles className="h-3.5 w-3.5" />
-              Today&apos;s focus
-            </Badge>
-            <div className="mt-4 text-3xl font-extrabold tracking-tight text-white md:text-4xl">
-              Master one course, then test it.
-            </div>
-            <div className="mt-2 text-sm font-semibold text-white/85 max-w-2xl">
+        <div className="relative overflow-hidden rounded-3xl p-7 md:p-10"
+          style={{
+            background: "linear-gradient(135deg, #6D28D9 0%, #7C3AED 40%, #4F46E5 100%)",
+            boxShadow: "0 8px 40px rgba(109,40,217,0.4), 0 0 80px rgba(124,58,237,0.2)",
+          }}>
+          {/* Animated glow orbs */}
+          <motion.div className="absolute -right-16 -top-16 h-64 w-64 rounded-full"
+            style={{ background: "rgba(255,255,255,0.12)", filter: "blur(40px)" }}
+            animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+          <motion.div className="absolute -left-20 -bottom-16 h-72 w-72 rounded-full"
+            style={{ background: "rgba(79,70,229,0.3)", filter: "blur(50px)" }}
+            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }} />
+
+          <div className="relative z-10">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Badge className="border-white/30 bg-white/15 text-white mb-4">
+                <Sparkles className="h-3.5 w-3.5" />
+                Today's focus
+              </Badge>
+            </motion.div>
+
+            <motion.div
+              className="text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-tight"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              Master one course,<br className="hidden md:block" /> then test it.
+            </motion.div>
+
+            <motion.div
+              className="mt-3 text-sm font-semibold max-w-xl"
+              style={{ color: "rgba(255,255,255,0.8)" }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
               Watch a short video, take a quiz, then do a quick review. Consistency beats intensity.
-            </div>
-            <div className="mt-6 flex flex-wrap gap-3">
+            </motion.div>
+
+            <motion.div
+              className="mt-6 flex flex-wrap gap-3"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
               <Link to="/app/subjects">
-                <Button variant="secondary" className="h-11 rounded-2xl border-white/30 bg-white/15 text-white hover:bg-white/20">
-                  Explore Subjects <ArrowRight className="h-4 w-4" />
-                </Button>
+                <motion.button
+                  whileHover={{ scale: 1.05, boxShadow: "0 0 24px rgba(255,255,255,0.3)" }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-2xl text-sm font-bold text-purple-700"
+                  style={{ background: "#FFFFFF", boxShadow: "0 4px 14px rgba(0,0,0,0.2)" }}
+                >
+                  Start Learning <ArrowRight className="h-4 w-4" />
+                </motion.button>
               </Link>
               <Link to="/app/mock-tests">
-                <Button variant="ghost" className="h-11 rounded-2xl text-white hover:bg-white/15">
+                <motion.button
+                  whileHover={{ scale: 1.05, background: "rgba(255,255,255,0.25)" }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-2xl text-sm font-bold text-white"
+                  style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)" }}
+                >
                   Take a Mock <GraduationCap className="h-4 w-4" />
-                </Button>
+                </motion.button>
               </Link>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </Card>
       </motion.div>
 
-      {/* Stats cards — from uploaded: stagger + fadeUp y:60 */}
+      {/* ── STATS CARDS ── */}
       <motion.div
         className="grid gap-4 md:grid-cols-3"
-        variants={{
-          animate: { transition: { staggerChildren: 0.15 } },
-        }}
+        variants={{ animate: { transition: { staggerChildren: 0.12 } } }}
         initial="initial"
         animate="animate"
       >
+        {/* Time Watched */}
         <motion.div
-          variants={{ initial: { opacity: 0, y: 60 }, animate: { opacity: 1, y: 0 } }}
-          transition={{ duration: 0.6 }}
-          whileHover={{ scale: 1.05, boxShadow: "0px 0px 20px rgba(124,58,237,0.4)" }}
+          variants={{ initial: { opacity: 0, y: 40 }, animate: { opacity: 1, y: 0 } }}
+          transition={{ duration: 0.5 }}
+          whileHover={{ scale: 1.03, y: -4 }}
         >
-          <Card className="p-5">
-            <div className="flex items-center justify-between">
-              <div className="text-xs font-extrabold text-ink-700 dark:text-ink-200">Time watched</div>
-              <motion.div
-                className="h-10 w-10 rounded-2xl border border-white/10 bg-white/10 grid place-items-center"
-                whileHover={{ scale: 1.15, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              >
-                <Flame className="h-5 w-5 text-byjus-400" />
+          <div className="rounded-2xl p-5 relative overflow-hidden"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(16px)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            }}>
+            <div className="absolute top-0 right-0 w-24 h-24 rounded-full"
+              style={{ background: "radial-gradient(circle, rgba(249,115,22,0.2) 0%, transparent 70%)" }} />
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#9CA3AF" }}>Time Watched</span>
+              <motion.div className="h-10 w-10 rounded-2xl grid place-items-center"
+                style={{ background: "rgba(249,115,22,0.2)", border: "1px solid rgba(249,115,22,0.3)" }}
+                whileHover={{ scale: 1.15, rotate: 10 }}>
+                <Flame className="h-5 w-5" style={{ color: "#FB923C" }} />
               </motion.div>
             </div>
-            <div className="mt-3 text-3xl font-extrabold text-ink-900 dark:text-ink-50">
-              {summaryLoading ? <Skeleton className="h-10 w-24" /> : formatHours(summary?.watched_seconds ?? 0)}
+            <div className="text-3xl font-extrabold" style={{ color: "#FFFFFF" }}>
+              {summaryLoading ? <Skeleton className="h-9 w-20" /> : formatHours(summary?.watched_seconds ?? 0)}
             </div>
-            <div className="mt-1 text-sm font-semibold text-ink-600 dark:text-ink-200">Updates when you watch lessons.</div>
-          </Card>
+            <div className="mt-1 text-xs font-semibold" style={{ color: "#6B7280" }}>Updates when you watch lessons</div>
+          </div>
         </motion.div>
 
-        <motion.div variants={{ initial: { opacity: 0, y: 60 }, animate: { opacity: 1, y: 0 } }} transition={{ duration: 0.6 }} whileHover={{ scale: 1.05, boxShadow: "0px 0px 20px rgba(124,58,237,0.4)" }}>
-          <Card className="p-5">
-            <div className="flex items-center justify-between">
-              <div className="text-xs font-extrabold text-ink-700 dark:text-ink-200">Avg quiz score</div>
-              <motion.div
-                className="h-10 w-10 rounded-2xl border border-white/10 bg-white/10 grid place-items-center"
-                whileHover={{ scale: 1.15, rotate: 10 }}
-                transition={{ type: "spring", stiffness: 400, damping: 18 }}
-              >
-                <GraduationCap className="h-5 w-5 text-byjus-400" />
+        {/* Quiz Score */}
+        <motion.div
+          variants={{ initial: { opacity: 0, y: 40 }, animate: { opacity: 1, y: 0 } }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          whileHover={{ scale: 1.03, y: -4 }}
+        >
+          <div className="rounded-2xl p-5 relative overflow-hidden"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(16px)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            }}>
+            <div className="absolute top-0 right-0 w-24 h-24 rounded-full"
+              style={{ background: "radial-gradient(circle, rgba(34,197,94,0.2) 0%, transparent 70%)" }} />
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#9CA3AF" }}>Avg Quiz Score</span>
+              <motion.div className="h-10 w-10 rounded-2xl grid place-items-center"
+                style={{ background: "rgba(34,197,94,0.2)", border: "1px solid rgba(34,197,94,0.3)" }}
+                whileHover={{ scale: 1.15, rotate: 10 }}>
+                <GraduationCap className="h-5 w-5" style={{ color: "#34D399" }} />
               </motion.div>
             </div>
-            <div className="mt-3 text-3xl font-extrabold text-ink-900 dark:text-ink-50">
-              {summaryLoading ? <Skeleton className="h-10 w-20" /> : (
-                <><AnimatedNumber value={summary?.avg_score_pct ?? 0} suffix="%" /></>
-              )}
+            <div className="text-3xl font-extrabold" style={{ color: "#FFFFFF" }}>
+              {summaryLoading ? <Skeleton className="h-9 w-20" /> : <AnimatedNumber value={summary?.avg_score_pct ?? 0} suffix="%" />}
             </div>
-            <div className="mt-1 text-sm font-semibold text-ink-600 dark:text-ink-200">Based on submitted quizzes.</div>
-          </Card>
+            <div className="mt-1 text-xs font-semibold" style={{ color: "#6B7280" }}>Based on submitted quizzes</div>
+          </div>
         </motion.div>
 
-        <motion.div variants={{ initial: { opacity: 0, y: 60 }, animate: { opacity: 1, y: 0 } }} transition={{ duration: 0.6 }} whileHover={{ scale: 1.05, boxShadow: "0px 0px 20px rgba(124,58,237,0.4)" }}>
-          <Card className="p-5">
-            <div className="text-xs font-extrabold text-ink-700 dark:text-ink-200">Overall progress</div>
-            <div className="mt-3 space-y-3">
+        {/* Overall Progress */}
+        <motion.div
+          variants={{ initial: { opacity: 0, y: 40 }, animate: { opacity: 1, y: 0 } }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          whileHover={{ scale: 1.03, y: -4 }}
+        >
+          <div className="rounded-2xl p-5 relative overflow-hidden"
+            style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              backdropFilter: "blur(16px)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+            }}>
+            <div className="absolute top-0 right-0 w-24 h-24 rounded-full"
+              style={{ background: "radial-gradient(circle, rgba(139,92,246,0.2) 0%, transparent 70%)" }} />
+            <div className="mb-3">
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#9CA3AF" }}>Overall Progress</span>
+            </div>
+            <div className="space-y-3">
               {subjectProgressLoading ? (
                 <><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-full" /></>
               ) : (
                 subjects.map((s, i) => {
                   const pct = subjectProgress[s.id] ?? 0;
+                  const colors = ["brand", "success", "cyan"] as const;
                   return (
                     <motion.div key={s.id}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 + i * 0.08, duration: 0.3 }}
-                    >
-                      <div className="flex items-center justify-between text-sm font-semibold text-ink-700 dark:text-ink-200">
-                        <span>{s.name}</span>
-                        <span className="text-ink-500 dark:text-ink-300">{pct}%</span>
+                      transition={{ delay: 0.3 + i * 0.08 }}>
+                      <div className="flex items-center justify-between text-xs font-semibold mb-1">
+                        <span style={{ color: "#D1D5DB" }}>{s.name}</span>
+                        <span style={{ color: "#A78BFA" }}>{pct}%</span>
                       </div>
-                      <ProgressBar value={pct} className="mt-2" />
+                      <ProgressBar value={pct} variant={colors[i]} height="xs" />
                     </motion.div>
                   );
                 })
               )}
             </div>
-          </Card>
+          </div>
         </motion.div>
       </motion.div>
 
-      {coursesError || actionError ? (
-        <Card className="p-4 border border-red-400/30 bg-red-500/10">
-          <div className="text-sm font-extrabold text-red-700 dark:text-red-100">{coursesError ?? actionError}</div>
-        </Card>
-      ) : null}
+      {(coursesError || actionError) && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl px-4 py-3 text-sm font-semibold"
+          style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.3)", color: "#FCA5A5" }}
+        >
+          {coursesError ?? actionError}
+        </motion.div>
+      )}
 
       <motion.div
         className="grid gap-4 lg:grid-cols-3"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ delay: 0.35, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       >
-        <Card className="p-5 lg:col-span-2">
-          <div className="flex items-center justify-between gap-3">
+        {/* Continue watching */}
+        <div className="rounded-2xl p-5 lg:col-span-2"
+          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(16px)" }}>
+          <div className="flex items-center justify-between gap-3 mb-4">
             <div>
-              <div className="text-sm font-extrabold text-ink-900 dark:text-ink-50">Continue where you left off</div>
-              <div className="text-sm font-semibold text-ink-600 dark:text-ink-200">Your in-progress lessons</div>
+              <div className="text-sm font-extrabold" style={{ color: "#FFFFFF" }}>Continue Learning</div>
+              <div className="text-xs font-semibold" style={{ color: "#6B7280" }}>Pick up where you left off</div>
             </div>
-            <Link to="/app/recorded-classes" className="text-sm font-bold text-byjus-300 hover:underline">
-              Open courses
+            <Link to="/app/recorded-classes" className="text-xs font-bold hover:underline" style={{ color: "#A78BFA" }}>
+              Open courses →
             </Link>
           </div>
 
-          <div className="mt-4 grid gap-3">
+          <div className="grid gap-3">
             {!hasHydrated ? (
               <><Skeleton className="h-20 w-full rounded-2xl" /><Skeleton className="h-20 w-full rounded-2xl" /></>
             ) : continueVideos.length ? (
               <motion.div className="space-y-3" variants={staggerContainer} initial="hidden" animate="show">
-              {continueVideos.map((v) => {
-                const thumb = getYouTubeThumbnail(v.url, "mq");
-                const pct = pctFor(v.id, v.durationMin, videoProgress);
-                return (
-                  <motion.div key={v.id} variants={staggerItem} whileHover={{ x: 4 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
-                  <Link to={`/app/videos/${v.id}`} className="focus-ring rounded-2xl">
-                    <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 shadow-soft transition hover:bg-white/10">
-                      <div className="h-14 w-24 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-                        <ThumbImage src={thumb} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-extrabold text-ink-900 dark:text-ink-50">{v.title}</div>
-                        <div className="truncate text-xs font-semibold text-ink-600 dark:text-ink-200">{v.teacher} · {v.durationMin} min</div>
-                        {pct > 0 ? <ProgressBar value={pct} className="mt-2 h-1.5" /> : null}
-                      </div>
-                      <motion.div
-                        className="grid h-11 w-11 place-items-center rounded-2xl byjus-gradient text-white shadow-glow"
-                        whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-                      >
-                        <PlayCircle className="h-5 w-5" />
-                      </motion.div>
-                    </div>
-                  </Link>
-                  </motion.div>
-                );
-              })}
+                {continueVideos.map((v) => {
+                  const thumb = getYouTubeThumbnail(v.url, "mq");
+                  const pct = pctFor(v.id, v.durationMin, videoProgress);
+                  return (
+                    <motion.div key={v.id} variants={staggerItem} whileHover={{ x: 4 }}>
+                      <Link to={`/app/videos/${v.id}`} className="focus-ring rounded-2xl block">
+                        <div className="flex items-center gap-3 rounded-2xl p-3 transition"
+                          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+                          onMouseEnter={(e) => (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)"}
+                          onMouseLeave={(e) => (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)"}>
+                          <div className="h-14 w-24 shrink-0 overflow-hidden rounded-xl" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
+                            <ThumbImage src={thumb} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="truncate text-sm font-extrabold" style={{ color: "#FFFFFF" }}>{v.title}</div>
+                            <div className="truncate text-xs font-semibold mt-0.5" style={{ color: "#6B7280" }}>{v.teacher} · {v.durationMin} min</div>
+                            {pct > 0 && <ProgressBar value={pct} className="mt-2" height="xs" />}
+                          </div>
+                          <motion.div
+                            className="grid h-10 w-10 place-items-center rounded-2xl text-white shrink-0"
+                            style={{ background: "linear-gradient(135deg, #8B5CF6, #7C3AED)", boxShadow: "0 0 16px rgba(139,92,246,0.4)" }}
+                            whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                            <PlayCircle className="h-5 w-5" />
+                          </motion.div>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
               </motion.div>
             ) : (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm font-semibold text-ink-600 dark:text-ink-200">
-                Start a course from <span className="font-extrabold text-ink-900 dark:text-ink-50">My Courses</span> to see continue-watching here.
+              <div className="rounded-2xl p-5 text-center"
+                style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.1)" }}>
+                <PlayCircle className="h-8 w-8 mx-auto mb-2" style={{ color: "#4B5563" }} />
+                <div className="text-sm font-semibold" style={{ color: "#6B7280" }}>
+                  Start a course from <span style={{ color: "#A78BFA" }}>My Courses</span> to see continue-watching here.
+                </div>
               </div>
             )}
           </div>
-        </Card>
+        </div>
 
-        <Card className="p-5">
-          <div className="flex items-center justify-between gap-3">
+        {/* Recommended */}
+        <div className="rounded-2xl p-5"
+          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(16px)" }}>
+          <div className="flex items-center justify-between gap-3 mb-4">
             <div>
-              <div className="text-sm font-extrabold text-ink-900 dark:text-ink-50">Recommended next</div>
-              <div className="text-sm font-semibold text-ink-600 dark:text-ink-200">Based on your learning activity</div>
+              <div className="text-sm font-extrabold" style={{ color: "#FFFFFF" }}>Recommended Next</div>
+              <div className="text-xs font-semibold" style={{ color: "#6B7280" }}>AI-powered picks</div>
             </div>
-            <Badge className="bg-white/10 border-white/10 text-ink-200">
-              <Wand2 className="h-3.5 w-3.5" />
-              Smart
-            </Badge>
+            <div className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold"
+              style={{ background: "rgba(139,92,246,0.2)", border: "1px solid rgba(139,92,246,0.3)", color: "#A78BFA" }}>
+              <Wand2 className="h-3 w-3" /> Smart
+            </div>
           </div>
-          <div className="mt-4 grid gap-3">
+          <div className="grid gap-2">
             {coursesLoading ? (
-              <>
-                <Skeleton className="h-14 w-full" />
-                <Skeleton className="h-14 w-full" />
-                <Skeleton className="h-14 w-full" />
-              </>
+              <><Skeleton className="h-14 w-full" /><Skeleton className="h-14 w-full" /><Skeleton className="h-14 w-full" /></>
             ) : (
               recommendedCourses.map((c) => {
                 const busy = action?.courseId === c.id && action.type === "watch";
                 return (
-                  <button
-                    key={c.id}
-                    type="button"
-                    className="w-full text-left focus-ring rounded-2xl"
+                  <motion.button key={c.id} type="button"
+                    className="w-full text-left focus-ring rounded-xl"
                     onClick={() => runCourse(c.id, "watch")}
                     disabled={Boolean(action) && !busy}
-                  >
-                    <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 shadow-soft transition hover:bg-white/10">
-                      <div className="h-12 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                    whileHover={{ scale: 1.02, x: 3 }}
+                    whileTap={{ scale: 0.98 }}>
+                    <div className="flex items-center gap-3 rounded-xl p-3"
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                      <div className="h-10 w-14 shrink-0 overflow-hidden rounded-lg" style={{ border: "1px solid rgba(255,255,255,0.1)" }}>
                         <ThumbImage src={c.thumbnail_url} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-sm font-extrabold text-ink-900 dark:text-ink-50">{c.title}</div>
-                        <div className="truncate text-xs font-semibold text-ink-600 dark:text-ink-200">
-                          {c.subject.toUpperCase()}
-                        </div>
+                        <div className="truncate text-xs font-extrabold" style={{ color: "#FFFFFF" }}>{c.title}</div>
+                        <div className="truncate text-[10px] font-semibold mt-0.5" style={{ color: "#6B7280" }}>{c.subject.toUpperCase()}</div>
                       </div>
-                      <Badge className="bg-white/10 border-white/10 text-ink-200">{busy ? "..." : "Go"}</Badge>
+                      <span className="text-[10px] font-bold rounded-full px-2 py-0.5 shrink-0"
+                        style={{ background: "rgba(139,92,246,0.2)", color: "#A78BFA", border: "1px solid rgba(139,92,246,0.3)" }}>
+                        {busy ? "..." : "Go"}
+                      </span>
                     </div>
-                  </button>
+                  </motion.button>
                 );
               })
             )}
           </div>
-        </Card>
+        </div>
       </motion.div>
 
       {recentlyViewed.length ? (
-        <Card className="p-5">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <div className="text-sm font-extrabold text-ink-900 dark:text-ink-50">Recently viewed</div>
-              <div className="text-sm font-semibold text-ink-600 dark:text-ink-200">Quickly jump back in</div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45, duration: 0.5 }}
+        >
+          <div className="rounded-2xl p-5"
+            style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(16px)" }}>
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <div>
+                <div className="text-sm font-extrabold" style={{ color: "#FFFFFF" }}>Recently Viewed</div>
+                <div className="text-xs font-semibold" style={{ color: "#6B7280" }}>Quickly jump back in</div>
+              </div>
+              <Link to="/app/recorded-classes" className="text-xs font-bold hover:underline" style={{ color: "#A78BFA" }}>Browse →</Link>
             </div>
-            <Link to="/app/recorded-classes" className="text-sm font-bold text-byjus-300 hover:underline">
-              Browse
-            </Link>
-          </div>
-          <div className="mt-4 grid gap-3 md:grid-cols-3">
-            {recentlyViewed.map((v) => {
-              const thumb = getYouTubeThumbnail(v.url, "mq");
-              return (
-                <Link key={v.id} to={`/app/videos/${v.id}`} className="focus-ring rounded-3xl">
-                  <Card interactive className="p-4 group">
-                    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+            <div className="grid gap-3 md:grid-cols-3">
+              {recentlyViewed.map((v) => {
+                const thumb = getYouTubeThumbnail(v.url, "mq");
+                return (
+                  <Link key={v.id} to={`/app/videos/${v.id}`} className="focus-ring rounded-2xl">
+                    <motion.div
+                      whileHover={{ scale: 1.03, y: -4 }}
+                      whileTap={{ scale: 0.98 }}
+                      className="rounded-2xl overflow-hidden"
+                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
                       <div className="relative w-full pt-[56.25%]">
-                        <ThumbImage
-                          src={thumb}
+                        <ThumbImage src={thumb}
                           className="absolute inset-0 h-full w-full object-cover"
-                          fallbackClassName="absolute inset-0 bg-gradient-to-br from-byjus-800/50 to-ink-950/50"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-ink-950/70 via-transparent to-transparent opacity-90" />
-                        <div className="absolute bottom-3 left-3 right-3">
-                          <div className="truncate text-sm font-extrabold text-white">{v.title}</div>
-                          <div className="truncate text-xs font-semibold text-white/80">{v.teacher}</div>
+                          fallbackClassName="absolute inset-0 bg-gradient-to-br from-purple-900/50 to-blue-900/50" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                        <div className="absolute bottom-2 left-3 right-3">
+                          <div className="truncate text-xs font-extrabold text-white">{v.title}</div>
+                          <div className="truncate text-[10px] text-white/60">{v.teacher}</div>
                         </div>
                       </div>
-                    </div>
-                    <div className="mt-3">
-                      <Button className="h-10 w-full rounded-2xl">
-                        <PlayCircle className="h-4 w-4" />
-                        Open
-                      </Button>
-                    </div>
-                  </Card>
-                </Link>
-              );
-            })}
+                      <div className="p-3">
+                        <motion.button
+                          type="button"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.97 }}
+                          className="w-full h-9 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-1.5"
+                          style={{ background: "linear-gradient(135deg, #8B5CF6, #7C3AED)", boxShadow: "0 0 16px rgba(139,92,246,0.3)" }}>
+                          <PlayCircle className="h-3.5 w-3.5" /> Open
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-        </Card>
+        </motion.div>
       ) : null}
 
+      {/* ── TOP COURSES ── */}
       <motion.div
-        initial={{ opacity: 0, y: 80 }}
+        initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
-      <Card className="p-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm font-extrabold text-ink-900 dark:text-ink-50">Top courses</div>
-            <div className="text-sm font-semibold text-ink-600 dark:text-ink-200">Quick revision + quiz</div>
+        <div className="rounded-2xl p-5"
+          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(16px)" }}>
+          <div className="flex items-center justify-between mb-5">
+            <div>
+              <div className="text-sm font-extrabold" style={{ color: "#FFFFFF" }}>Top Courses</div>
+              <div className="text-xs font-semibold" style={{ color: "#6B7280" }}>Quick revision + quiz</div>
+            </div>
+            <Link to="/app/subjects" className="text-xs font-bold hover:underline" style={{ color: "#A78BFA" }}>
+              Open subjects →
+            </Link>
           </div>
-          <Link to="/app/subjects" className="text-sm font-bold text-byjus-300 hover:underline">Open subjects</Link>
-        </div>
-        <div className="mt-4 grid gap-3 md:grid-cols-3">
-          {coursesLoading ? (
-            Array.from({ length: 3 }).map((_, i) => (
-              <div key={`top_sk_${i}`} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 shadow-soft">
-                <Skeleton className="h-4 w-2/3" /><Skeleton className="mt-3 h-3 w-1/2" />
-                <Skeleton className="mt-4 h-2.5 w-full" />
-                <div className="mt-3 grid grid-cols-2 gap-2"><Skeleton className="h-10 w-full" /><Skeleton className="h-10 w-full" /></div>
-              </div>
-            ))
-          ) : (
-            topCourses.map((c, i) => {
-              const watchBusy = action?.courseId === c.id && action.type === "watch";
-              const quizBusy = action?.courseId === c.id && action.type === "quiz";
-              return (
-                <motion.div
-                  key={c.id}
-                  initial={{ opacity: 0, y: 60 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.15, duration: 0.6, ease: "easeInOut" }}
-                  whileHover={{ scale: 1.05, boxShadow: "0px 0px 20px rgba(124,58,237,0.5)" }}
-                  className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 shadow-soft"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="truncate text-sm font-extrabold text-ink-900 dark:text-ink-50">{c.title}</div>
-                      <div className="mt-1 text-xs font-semibold text-ink-600 dark:text-ink-200">{c.subject.toUpperCase()}</div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {coursesLoading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="rounded-2xl p-4"
+                  style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <Skeleton className="h-4 w-2/3 mb-3" />
+                  <Skeleton className="h-3 w-1/2 mb-4" />
+                  <Skeleton className="h-2 w-full mb-3" />
+                  <div className="grid grid-cols-2 gap-2">
+                    <Skeleton className="h-9 w-full" />
+                    <Skeleton className="h-9 w-full" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              topCourses.map((c, i) => {
+                const watchBusy = action?.courseId === c.id && action.type === "watch";
+                const quizBusy  = action?.courseId === c.id && action.type === "quiz";
+                const subjectColors = [
+                  { glow: "rgba(139,92,246,0.15)", border: "rgba(139,92,246,0.3)", tag: "#A78BFA" },
+                  { glow: "rgba(34,197,94,0.15)",  border: "rgba(34,197,94,0.3)",  tag: "#34D399" },
+                  { glow: "rgba(59,130,246,0.15)",  border: "rgba(59,130,246,0.3)",  tag: "#60A5FA" },
+                ][i % 3];
+                return (
+                  <motion.div
+                    key={c.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1, duration: 0.5 }}
+                    whileHover={{ scale: 1.03, y: -4, boxShadow: `0 12px 40px rgba(0,0,0,0.4), 0 0 30px ${subjectColors.glow}` }}
+                    className="rounded-2xl p-4"
+                    style={{
+                      background: "rgba(255,255,255,0.05)",
+                      border: `1px solid ${subjectColors.border}`,
+                      boxShadow: `0 0 20px ${subjectColors.glow}`,
+                    }}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-extrabold" style={{ color: "#FFFFFF" }}>{c.title}</div>
+                        <div className="mt-0.5 text-[10px] font-bold uppercase tracking-widest" style={{ color: subjectColors.tag }}>
+                          {c.subject}
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-bold rounded-full px-2 py-0.5 shrink-0"
+                        style={{ background: subjectColors.glow, color: subjectColors.tag, border: `1px solid ${subjectColors.border}` }}>
+                        New
+                      </span>
                     </div>
-                    <Badge className="bg-white/10 border-white/10 text-ink-200">New</Badge>
-                  </div>
-                  <ProgressBar value={courseProgress[c.id] ?? 0} className="mt-3" />
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    <Button variant="secondary" className="h-10 w-full rounded-2xl" onClick={() => runCourse(c.id, "watch")} disabled={Boolean(action) && !watchBusy}>
-                      {watchBusy ? "..." : "Watch"}
-                    </Button>
-                    <Button className="h-10 w-full rounded-2xl" onClick={() => runCourse(c.id, "quiz")} disabled={Boolean(action) && !quizBusy}>
-                      {quizBusy ? "..." : "Quiz"}
-                    </Button>
-                  </div>
-                </motion.div>
-              );
-            })
-          )}
+
+                    <ProgressBar value={courseProgress[c.id] ?? 0} className="mb-4"
+                      variant={["brand", "success", "cyan"][i % 3] as any} height="xs" />
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <motion.button
+                        type="button"
+                        onClick={() => runCourse(c.id, "watch")}
+                        disabled={Boolean(action) && !watchBusy}
+                        whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                        className="h-9 rounded-xl text-xs font-bold text-white disabled:opacity-50"
+                        style={{ background: "rgba(139,92,246,0.2)", border: "1px solid rgba(139,92,246,0.4)", color: "#A78BFA" }}>
+                        {watchBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin mx-auto" /> : "▶ Watch"}
+                      </motion.button>
+                      <motion.button
+                        type="button"
+                        onClick={() => runCourse(c.id, "quiz")}
+                        disabled={Boolean(action) && !quizBusy}
+                        whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                        className="h-9 rounded-xl text-xs font-bold disabled:opacity-50"
+                        style={{ background: "linear-gradient(135deg, #8B5CF6, #7C3AED)", color: "#FFFFFF", boxShadow: "0 0 12px rgba(139,92,246,0.3)" }}>
+                        {quizBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin mx-auto" /> : "✦ Quiz"}
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                );
+              })
+            )}
+          </div>
         </div>
-      </Card>
       </motion.div>
     </div>
   );

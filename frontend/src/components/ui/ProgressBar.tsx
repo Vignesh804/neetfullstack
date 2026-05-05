@@ -3,12 +3,20 @@ import { cn } from "@/lib/cn";
 
 type ProgressVariant = "brand" | "success" | "warning" | "danger" | "cyan";
 
-const fillClasses: Record<ProgressVariant, string> = {
-  brand:   "bg-brand-500",
-  success: "bg-emerald-500",
-  warning: "bg-amber-500",
-  danger:  "bg-red-500",
-  cyan:    "bg-cyan-500",
+const fillGradients: Record<ProgressVariant, string> = {
+  brand:   "linear-gradient(90deg, #8B5CF6 0%, #3B82F6 100%)",
+  success: "linear-gradient(90deg, #22C55E 0%, #10B981 100%)",
+  warning: "linear-gradient(90deg, #F59E0B 0%, #F97316 100%)",
+  danger:  "linear-gradient(90deg, #EF4444 0%, #F97316 100%)",
+  cyan:    "linear-gradient(90deg, #06B6D4 0%, #3B82F6 100%)",
+};
+
+const glowColors: Record<ProgressVariant, string> = {
+  brand:   "rgba(139,92,246,0.5)",
+  success: "rgba(34,197,94,0.5)",
+  warning: "rgba(245,158,11,0.5)",
+  danger:  "rgba(239,68,68,0.5)",
+  cyan:    "rgba(6,182,212,0.5)",
 };
 
 export function ProgressBar({
@@ -31,20 +39,25 @@ export function ProgressBar({
   return (
     <div className={cn("space-y-1", className)}>
       {showLabel && (
-        <div className="flex justify-between text-xs font-medium text-slate-500">
+        <div className="flex justify-between text-xs font-medium" style={{ color: "#9CA3AF" }}>
           <span>Progress</span>
-          <span className="text-slate-700 font-semibold">{v}%</span>
+          <span style={{ color: "#E5E7EB", fontWeight: 700 }}>{v}%</span>
         </div>
       )}
       <div
-        className={cn("w-full rounded-full overflow-hidden bg-slate-100", heightClass)}
+        className={cn("w-full rounded-full overflow-hidden", heightClass)}
+        style={{ background: "rgba(255,255,255,0.08)" }}
         role="progressbar"
         aria-valuenow={v}
         aria-valuemin={0}
         aria-valuemax={100}
       >
         <motion.div
-          className={cn("h-full rounded-full", fillClasses[variant])}
+          className="h-full rounded-full"
+          style={{
+            background: fillGradients[variant],
+            boxShadow: v > 0 ? `0 0 8px ${glowColors[variant]}` : "none",
+          }}
           initial={false}
           animate={{ width: `${v}%` }}
           transition={

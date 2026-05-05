@@ -145,14 +145,41 @@ export function TeacherDashboardScreen() {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<ApiTeacherDashboard | null>(null);
   const [tab, setTab] = useState<Tab>("overview");
+  const [noSubject, setNoSubject] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     api.teacher.dashboard()
       .then(setData)
-      .catch((err: any) => setError(err?.message ?? "Failed to load"))
+      .catch((err: any) => {
+        // 404 means no subject assigned — redirect to subject page
+        if (err?.status === 404 || err?.message?.toLowerCase().includes("subject")) {
+          setNoSubject(true);
+        } else {
+          setError(err?.message ?? "Failed to load");
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
+
+  // No subject assigned → redirect to My Subject page
+  if (noSubject) {
+    return (
+      <div className="flex h-64 flex-col items-center justify-center gap-4 rounded-2xl"
+        style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)" }}>
+        <BookOpen className="h-12 w-12" style={{ color: "#A78BFA" }} />
+        <div className="text-center">
+          <div className="text-lg font-bold" style={{ color: "#FFFFFF" }}>No subject assigned yet</div>
+          <div className="mt-1 text-sm" style={{ color: "#9CA3AF" }}>Please assign your subject to get started.</div>
+        </div>
+        <a href="/teacher/subject"
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl text-white"
+          style={{ background: "linear-gradient(135deg, #8B5CF6, #7C3AED)", boxShadow: "0 4px 14px rgba(139,92,246,0.4)" }}>
+          Go to My Subject →
+        </a>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

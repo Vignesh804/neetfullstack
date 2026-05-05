@@ -30,7 +30,13 @@ async def register(data: UserCreate, session: AsyncSession = Depends(get_async_s
 
 @router.post("/login", response_model=TokenResponse)
 async def login(data: UserLogin, session: AsyncSession = Depends(get_async_session)):
-  user = await authenticate(session, email=str(data.email), password=data.password, role=data.role)
+  user = await authenticate(
+    session,
+    email=str(data.email),
+    password=data.password,
+    role=data.role,
+    teacher_code=data.teacher_code,
+  )
   if data.device_id:
     user.device_id = data.device_id
     await session.commit()

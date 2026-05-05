@@ -10,8 +10,6 @@ export function LoginScreen() {
   const navigate = useNavigate();
   const location = useLocation() as any;
   const { signIn } = useAuth();
-  const demoEmail = "student@demo.com";
-  const demoPassword = "student123";
 
   useEffect(() => {
     if (!hasAuthRole()) {
@@ -84,29 +82,6 @@ export function LoginScreen() {
 
         <Button type="submit" className="w-full h-11 rounded-2xl" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
-        </Button>
-
-        <Button
-          type="button"
-          variant="secondary"
-          className="w-full h-11 rounded-2xl"
-          disabled={loading}
-          onClick={async () => {
-            setEmail(demoEmail);
-            setPassword(demoPassword);
-            setError(null);
-            setLoading(true);
-            try {
-              await signIn({ email: demoEmail, password: demoPassword });
-              navigate(nextPath, { replace: true });
-            } catch (err: any) {
-              setError(err?.message ?? "Login failed.");
-            } finally {
-              setLoading(false);
-            }
-          }}
-        >
-          {loading ? "Logging in..." : "Demo login"}
         </Button>
 
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm font-semibold">
